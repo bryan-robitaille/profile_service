@@ -3,7 +3,6 @@ require("dotenv").config();
 const env = process.env.NODE_ENV; // 'development' or 'production'
 const clientId = process.env.client_id;
 const clientSecret = process.env.client_secret;
-const engineAPI = process.env.ENGINE_API_KEY;
 const mqUser = process.env.MQ_USER;
 const mqPass = process.env.MQ_PASS;
 
@@ -36,9 +35,6 @@ const development = {
  },
  elastic:{
    host:"http://localhost:9200"
- },
- engine:{
-   apiID: engineAPI
  }
 };
 
@@ -71,9 +67,6 @@ client:{
 },
 elastic:{
   host:"http://localhost:9200"
-},
-engine:{
-  apiID: engineAPI
 }
 };
 

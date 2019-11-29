@@ -89,9 +89,6 @@ const schema = applyMiddleware(
 
 const server = new ApolloServer({
   schema,
-  engine: {
-      apiKey: config.engine.apiID,
-  },
   tracing: config.app.tracing,
   introspection: true,
   playground: true,

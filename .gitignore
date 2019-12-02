@@ -42,6 +42,9 @@ temp_convert
 # docker volume for image server upload storage
 image-server/uploads
 
+# Image server base code
+image-server
+
 # jest test results
 jest_*/
 

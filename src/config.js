@@ -1,10 +1,20 @@
 require("dotenv").config();
 
 const env = process.env.NODE_ENV; // 'development' or 'production'
+
+// Get app basic config settings for Prisma
+const appName = process.env.APP_NAME;
+const prismaHost =  process.env.PRISMA_HOST;
+
+
+// OpenID provider clientID and Secret
 const clientId = process.env.client_id;
 const clientSecret = process.env.client_secret;
+
+// Message queue username and password
 const mqUser = process.env.MQ_USER;
 const mqPass = process.env.MQ_PASS;
+
 
 const development = {
  app: {
@@ -13,11 +23,11 @@ const development = {
    tracing: true
  },
  prisma: {
-     host:"localhost",
-     debug: false
- },
+  host: prismaHost + "/" + appName + "/dev",
+  debug: true
+},
  image:{
-   url:"http://localhost:8007/backend.php",
+   url:"http://localhost:8007/api/base64.php",
    format:"jpeg",
    size:300
  },
@@ -27,7 +37,7 @@ const development = {
    password: mqPass
  },
  openId:{
-   url:"https://dev.account.gccollab.ca"
+   url:"https://account.da-an.ca"
  },
  client:{
    id:clientId,
@@ -45,21 +55,21 @@ const production = {
    tracing: false
  },
  prisma: {
-     host: "prisma",
-     debug: false
- },
+  host: prismaHost + "/" + appName + "/prod",
+  debug: true
+},
  image:{
-  url:"http://image/backend.php",
+  url:"http://avatar-quantum.ca-central-1.elasticbeanstalk.com/api/base64.php",
   format:"jpeg",
   size:300
 },
 rabbitMQ:{
-  host:"mq.gccollab.ca",
+  host:"b-ae6dfc13-1270-4853-989b-be2f853ae2a6-1.mq.ca-central-1.amazonaws.com",
   user: mqUser,
   password: mqPass
 },
 openId:{
-  url:"https://account.gccollab.ca"
+  url:"https://account.da-an.ca"
 },
 client:{
   id:clientId,

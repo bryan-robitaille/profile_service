@@ -1,6 +1,6 @@
 const { ApolloServer, gql, makeExecutableSchema } = require("apollo-server");
 const { Prisma } = require("prisma-binding");
-const {EmailAddress, PostalCode} =  require("@okgrow/graphql-scalars");
+const {EmailAddressResolver, PostalCodeResolver} =  require("graphql-scalars");
 const Query = require("./resolvers/Query");
 const {modifyProfile, createTeam, modifyTeam, deleteTeam, modifyApproval} = require("./resolvers/Mutations");
 const {PhoneNumber} = require("./resolvers/Scalars");
@@ -25,9 +25,9 @@ const resolvers = {
     deleteTeam,
     modifyApproval
   },
-  Email : EmailAddress,
+  Email : EmailAddressResolver,
   PhoneNumber,
-  PostalCode
+  PostalCode : PostalCodeResolver
 };
 
 const profileApprovalRequiredApplications = {
@@ -61,7 +61,7 @@ const authenticationRequiredApplications =
   }
 };
 
-const typeDefs = gql`${fs.readFileSync(__dirname.concat("/schema.graphql"), "utf8")}`;
+const typeDefs = gql(fs.readFileSync(__dirname.concat("/schema.graphql"), "utf8"));
 
 const schemaBeforeMiddleware = makeExecutableSchema({
   typeDefs,
@@ -99,7 +99,7 @@ const server = new ApolloServer({
     ...req,
     prisma: new Prisma({
       typeDefs: "./src/generated/prisma.graphql",
-      endpoint: "http://"+config.prisma.host+":4466/profile/",
+      endpoint: config.prisma.host,
       debug: config.prisma.debug,
     }),
     token: await introspect.verifyToken(req),

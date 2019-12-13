@@ -44,7 +44,14 @@ async function publishMessageQueue(exchange, key, msgBody){
 // if the connection is closed or fails to be established at all, we will reconnect
 function connectMessageQueuePublisher(){
   
-    amqp.connect("amqp+ssl://" + config.rabbitMQ.user + ":" + config.rabbitMQ.password + "@" + config.rabbitMQ.host +"?heartbeat=60", function(err, conn) {
+    amqp.connect({
+      protocol:"amqps",
+      hostname: config.rabbitMQ.host,
+      port: 5671,
+      username: config.rabbitMQ.user,
+      password: config.rabbitMQ.password,
+      heartbeat: 60,
+    }, function(err, conn) {
         if (err) {
             // eslint-disable-next-line no-console
             console.error("[SMQ]", err.message);

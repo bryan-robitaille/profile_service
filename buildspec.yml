@@ -24,7 +24,7 @@ phases:
       # - command
   build:
     commands:
-      - npm install
+      - yarn install
       # - command
   #post_build:
     #commands:

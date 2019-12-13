@@ -7,9 +7,12 @@
     "test": "tests"
   },
   "scripts": {
-    "start": "node src/cluster.js",
-    "dev-deploy": "PRISMA_API_ENDPOINT=localhost APP_NAME=profile prisma deploy",
+    "start": "NODE_ENV=production node -r dotenv/config src/cluster.js",
     "dev": "NODE_ENV=development node src/index.js",
+    "deploy-dev": "env-cmd -e development yarn prisma deploy",
+    "deploy-prod": "env-cmd -e production yarn prisma deploy",
+    "prisma-admin-prod": "env-cmd -e production yarn prisma token",
+    "prisma-admin-dev": "env-cmd -e development yarn prisma token",
     "eslint": "eslint src/",
     "test": "PRISMA_API_ENDPOINT=localhost yarn prisma deploy && NODE_ENV=development jest --runInBand --coverage"
   },
@@ -45,6 +48,7 @@
     "codacy-coverage": "^3.4.0",
     "datauri": "^2.0.0",
     "dotenv": "^6.2.0",
+    "env-cmd": "^10.0.1",
     "eslint": "^5.14.1",
     "express-jwt": "^5.3.1",
     "graphql": "^14.1.1",

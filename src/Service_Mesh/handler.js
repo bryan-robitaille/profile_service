@@ -11,6 +11,7 @@ var context = {
         typeDefs: "./src/generated/prisma.graphql",
         endpoint: config.prisma.host,
         debug: config.prisma.debug,
+        secret: process.env.PRISMA_SERVICE_SECRET,
       }),
 };
 

@@ -8,8 +8,8 @@ const prismaHost =  process.env.PRISMA_HOST;
 
 
 // OpenID provider clientID and Secret
-const clientId = process.env.client_id;
-const clientSecret = process.env.client_secret;
+const clientId = process.env.CLIENT_ID;
+const clientSecret = process.env.CLIENT_SECRET;
 
 // Message queue username and password
 const mqUser = process.env.MQ_USER;

@@ -1,10 +1,8 @@
 
 
-endpoint: http://${env:PRISMA_API_ENDPOINT}:4466/${env:APP_NAME}/dev
+endpoint: ${env:PRISMA_API_ENDPOINT}
 datamodel: datamodel.graphql
+secret: ${env:PRISMA_SERVICE_SECRET}
 generate:
   - generator: graphql-schema
     output: ../src/generated/prisma.graphql
-hooks:
-  post-deploy:
-    - prisma generate

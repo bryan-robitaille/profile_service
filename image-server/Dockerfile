@@ -1,59 +1,91 @@
-FROM shito/alpine-nginx:edge
- 
+FROM nginx:mainline-alpine
+MAINTAINER Christian Haschek <office@haschek-solutions.com>
+
+ENV S6_VERSION v1.22.1.0
+
 # Add PHP 7
-RUN apk upgrade -U && \
-    apk --update --repository=http://dl-4.alpinelinux.org/alpine/edge/testing add \
-    openssl \
-    ffmpeg \
-    unzip \
-    php7 \
-    php7-pdo \
-    php7-mcrypt \
-    php7-curl \
-    php7-gd \
-    php7-json \
-    php7-fpm \
-    php7-openssl \
-    php7-ctype \
-    php7-opcache \
-    php7-mbstring \
-    php7-session \
-    php7-fileinfo \
-    php7-pcntl \
-    file \
-    git
+RUN set -x \
+    && apk upgrade -U \
+    && apk --update \
+#   --repository=http://dl-4.alpinelinux.org/alpine/edge/testing \
+        add \
+        openssl \
+        nano \
+        ffmpeg \
+        file \
+        unzip \
+        bash \
+        curl \
+        php7 \
+        php7-pdo \
+        php7-exif \
+        php7-mcrypt \
+        php7-curl \
+        php7-gd \
+        php7-json \
+        php7-fpm \
+        php7-openssl \
+        php7-ctype \
+        php7-opcache \
+        php7-mbstring \
+        php7-session \
+        php7-fileinfo \
+        php7-pcntl \
+    && rm -rf /var/cache/apk/*
+
+# s6 overlay
+# all supported architectures look at "assets" on
+# https://github.com/just-containers/s6-overlay/releases
+RUN /bin/bash -c 'set -ex && \
+    ARCH="$(uname -m)" && \
+    case "${ARCH##*-}" in \
+        x86_64) S6_PLATFORM="amd64" ;; \
+        armv7l) S6_PLATFORM="armhf" ;; \
+        armv6) S6_PLATFORM="armhf" ;; \
+        arm) S6_PLATFORM="arm" ;; \
+        aarch64) S6_PLATFORM="aarch64" ;;\
+        i386) S6_PLATFORM="x86" ;;\
+        *) echo >&2 "unsupported architecture: ${ARCH}"; exit 1 ;; \
+    esac; \
+    curl -L -s https://github.com/just-containers/s6-overlay/releases/download/${S6_VERSION}/s6-overlay-${S6_PLATFORM}.tar.gz \
+  | tar xvzf - -C / '
+
 
 COPY /rootfs /
 
-# Small fixes
-RUN rm /usr/bin/php && \
-    ln -s /etc/php7 /etc/php && \
-    ln -s /usr/bin/php7 /usr/bin/php && \
-    ln -s /usr/sbin/php-fpm7 /usr/bin/php-fpm && \
-    ln -s /usr/lib/php7 /usr/lib/php && \
-    rm -fr /var/cache/apk/*
+RUN set -x \
+    && rm /usr/bin/php \
+    && ln -s /etc/php7 /etc/php \
+    && ln -s /usr/bin/php7 /usr/bin/php \
+    && ln -s /usr/sbin/php-fpm7 /usr/bin/php-fpm \
+    && ln -s /usr/lib/php7 /usr/lib/php \
+#    && ln -s /dev/stdout /var/log/nginx/access.log \
+#    && ln -s /dev/stderr /var/log/nginx/error.log \
+    && mkdir -p /var/log/php-fpm \
+    && ln -s /dev/stderr /var/log/php-fpm/fpm-error.log
 
 # Enable default sessions
-RUN mkdir -p /var/lib/php7/sessions
-RUN chown nginx:nginx /var/lib/php7/sessions
+RUN set -x \
+    && mkdir -p /var/lib/php7/sessions \
+    && chown nginx:nginx /var/lib/php7/sessions
 
 # ADD SOURCE
-RUN mkdir -p /usr/share/nginx/html
-RUN chown -Rf nginx:nginx /usr/share/nginx/html
+RUN set -x \
+    && mkdir -p /usr/share/nginx/html
 
 WORKDIR /usr/share/nginx/html
-RUN git clone https://github.com/gctools-outilsgc/Image-Resource-Server.git .
-RUN git checkout master
-RUN git pull
 
-VOLUME /usr/share/nginx/html/upload
+RUN set -x \
+    && curl --silent --remote-name https://codeload.github.com/HaschekSolutions/pictshare/zip/master \
+    && unzip -q master \
+    && mv pictshare-master/* . \
+    && rm -r master pictshare-master \
+    && mv inc/example.config.inc.php inc/config.inc.php \
+    && chown -R nginx:nginx /usr/share/nginx/html \
+    && chmod +x bin/ffmpeg
 
-RUN chmod +x bin/ffmpeg
-
-RUN chown -Rf nginx:nginx /usr/share/nginx/html
-RUN chmod -R 777 /usr/share/nginx/html/
-RUN chmod 777 /etc/pictshare.sh
+VOLUME /usr/share/nginx/html/data
 
 EXPOSE 80
 
-ENTRYPOINT ["/etc/pictshare.sh"]
+ENTRYPOINT ["bash", "/pictshare.sh"]

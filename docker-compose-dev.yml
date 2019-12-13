@@ -6,7 +6,7 @@ services:
       - image_server:/usr/share/nginx/html/upload
     environment:
       - TITLE=OADW-Image-Server
-      - DOMAIN=http://localhost:8007
+      - URL=http://localhost:8007/
       - LOWPROFILE=True
     ports:
     - "8007:80"
@@ -18,7 +18,7 @@ services:
       PRISMA_CONFIG: |
         port: 4466
         # uncomment the next line and provide the env var PRISMA_MANAGEMENT_API_SECRET=my-secret to activate cluster security
-        # managementApiSecret: thehouseisalwaysblue
+        # managementApiSecret: superSecret
         databases:
           default:
             connector: postgres

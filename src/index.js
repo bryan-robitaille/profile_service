@@ -2,7 +2,7 @@ const { ApolloServer, gql, makeExecutableSchema } = require("apollo-server");
 const { Prisma } = require("prisma-binding");
 const {EmailAddressResolver, PostalCodeResolver} =  require("graphql-scalars");
 const Query = require("./resolvers/Query");
-const {modifyProfile, createTeam, modifyTeam, deleteTeam, modifyApproval} = require("./resolvers/Mutations");
+const {modifyProfile, createTeam, modifyTeam, deleteTeam, modifyApproval, createProfile} = require("./resolvers/Mutations");
 const {PhoneNumber} = require("./resolvers/Scalars");
 const config = require("./config");
 const AuthDirectives = require("./Auth/Directives");
@@ -23,7 +23,8 @@ const resolvers = {
     createTeam,
     modifyTeam,  
     deleteTeam,
-    modifyApproval
+    modifyApproval,
+    createProfile,
   },
   Email : EmailAddressResolver,
   PhoneNumber,
@@ -101,13 +102,12 @@ const server = new ApolloServer({
       typeDefs: "./src/generated/prisma.graphql",
       endpoint: config.prisma.host,
       debug: config.prisma.debug,
+      secret: process.env.PRISMA_SERVICE_SECRET,
     }),
     token: await introspect.verifyToken(req),
     defaults: await getDefaults()
   }),
 });
-
-
 
 server.listen().then(({ url }) => {
   // eslint-disable-next-line no-console

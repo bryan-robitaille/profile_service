@@ -38,7 +38,7 @@ const convertPicture = async (originPath) => {
     .jpeg()
     .resize(config.image.size)
     .toFile(destinationPath)
-    .then(function(removeFile){
+    .then(function(){
       deletePictureFromTempFolder(originPath);
     })
     .then(function (err, info){
@@ -56,11 +56,11 @@ const postImage = (path) => {
     var filePath = String(path);
     const base64encoded = dataURI(filePath);
 
-    var req = request({
+    request.post({
       url:     config.image.url,
-      method: "POST",
-      qs:{"base64": base64encoded}
-
+      form: {
+        "base64": base64encoded
+      }
     }, function optionalCallback (err, httpResponse, body) {
       if (err) {
         reject();
@@ -70,8 +70,6 @@ const postImage = (path) => {
         resolve(url);
       }
     });
-    var form = req.form();
-    form.append("postimage", fs.createReadStream(filePath));
    });
 };
 

@@ -1,128 +1,54 @@
-<p align="center">
-  <a href="" rel="noopener">
- <img height=200px src="https://pictshare.net/phhynj.png" alt="PictShare logo"></a>
-</p>
+# Official PictShare Docker image - Now based on Alpine Linux and PHP 7
+The fastest way to deploy [PictShare](https://www.pictshare.net)
 
-<h1 align="center">PictShare</h1>
+It automatically updates on start unless you supply the env variable AUTOUPDATE=false
 
-<h4 align="center">https://pictshare.net</h4>
+[![Docker setup](http://www.pictshare.net/b65dea2117.gif)](https://www.pictshare.net/8a1dec0973.mp4)
 
-<div align="center">
- 
-  
-![](https://img.shields.io/badge/php-7.1%2B-brightgreen.svg)
-[![](https://img.shields.io/docker/pulls/hascheksolutions/pictshare?color=brightgreen)](https://hub.docker.com/r/hascheksolutions/pictshare)
-[![](https://img.shields.io/docker/cloud/build/hascheksolutions/pictshare?color=brightgreen)](https://hub.docker.com/r/hascheksolutions/pictshare/builds)
-[![Apache License](https://img.shields.io/badge/license-Apache-brightgreen.svg?style=flat)](https://github.com/HaschekSolutions/pictshare/blob/master/LICENSE)
-[![HitCount](http://hits.dwyl.io/HaschekSolutions/pictshare.svg)](http://hits.dwyl.io/HaschekSolutions/pictshare)
-[![](https://img.shields.io/github/stars/HaschekSolutions/pictshare.svg?label=Stars&style=social)](https://github.com/HaschekSolutions/pictshare)
+## Usage
 
-#### Host your own `images` `gifs` `mp4s` `text bins` and stay in control
+### Building it
+```bash
+docker build -t hascheksolutions/pictshare .
+```
 
-</div>
+### Quick start
+```bash
+docker run -d -p 80:80 --name=pictshare hascheksolutions/pictshare
+```
 
------------------------------------------
+### Persistent data
+```bash
+mkdir /data/pictshareuploads
+chown 1000 -R /data/pictshareuploads
+docker run -d -v /data/pictshareuploads:/usr/share/nginx/html/data -p 80:80 --name=pictshare hascheksolutions/pictshare
+```
 
-Table of contents
-=================
-* [Installation](/rtfm/INSTALL.md)
-* [Docker](/rtfm/DOCKER.md)
-* [API](/rtfm/API.md)
-* [Addons/Integration](/rtfm/INTEGRATIONS.md)
-* [Development status](#development-status)
-* [Features](#features)
+### Persistent data with increased max upload size
+```bash
+mkdir /data/pictshareuploads
+chown 1000 -R /data/pictshareuploads
+docker run -d -e "MAX_UPLOAD_SIZE=1024" -v /data/pictshareuploads:/usr/share/nginx/html/data -p 80:80 --name=pictshare hascheksolutions/pictshare
+```
 
----
+## ENV Variables
+There are some ENV variables that only apply to the Docker image
+- AUTO_UPDATE (true/false | should the container upgrade on every start? default: true)
+- MAX_UPLOAD_SIZE (int | size in MB that will be used for nginx. default 50)
 
-## New Features in v2
-
-- Added text hosting (like pastebin)
-- Added URL shortening
-- Added WebP to images (and conversion from jpg,png to webp)
-- Massive code rework. Actually we designed it from the ground up to be more modular and easier to debug
-
-## Breaking changes in v2
-
-- [New API system](/rtfm/API.md). Only single file uploads now via /api/upload.php (POST var name is "file"). [read more..](/rtfm/API.md)
-- Data directory renamed from ```upload``` to ```data```
-- Backblaze support dropped for now because we didn't need it anymore as ALT_FOLDER is more flexible. If someone needs it, it can easily be implemented via adding a new storage controller. We're happy to accept pull requests
-- Dropped support for legacy URLs (/thumbs/1024x768_d8c01b45a6.png cant be used anymore, should be /1024x768/d8c01b45a6.png)
-
-# Features
-
-- Selfhostable
-- [Simple upload API](/rtfm/API.md)
-- 100% file based - no database needed
-- [Scalable](/rtfm/SCALING.md)
-- Many [Filters](/rtfm/IMAGEFILTERS.md) for images
-- GIF to MP4 conversion
-- JPG, PNG to WEBP conversion
-- MP4 resizing
-- PictShare removes all exif data so you can upload photos from your phone and all GPS tags and camera model info get wiped
-- Change and resize your uploads just by editing the URL
-- Duplicates don't take up space. If the exact same file is uploaded twice, the second upload will link to the first
-- Many [configuration options](/rtfm/CONFIG.md)
-- Full control over your data. Delete images with individual and global delete codes
-
-
----
-
-## Development roadmap
-
-- [x] Duplicate detection
-- [x] Write permission detection
-- [x] Delete codes for every uploaded file
-- [x] Upload via link/url
-- [x] Upload via base64
-- [ ] Autodestruct for every uploaded file
-
-### Config options
-
-Read [here](/rtfm/CONFIG.md) what those options do
-
-- [x] ALT_FOLDER
-- [x] URL (instead of FORCE_DOMAIN but mandatory)
-- [x] LOG_UPLOADER
-- [x] FFMPEG_BINARY
-- [x] PNG_COMPRESSION
-- [x] JPEG_COMPRESSION
-- [x] WEBP_COMPRESSION
-- [x] MASTER_DELETE_CODE
-- [x] MASTER_DELETE_IP
-- [x] UPLOAD_FORM_LOCATION
-- [ ] UPLOAD_QUOTA
-- [ ] UPLOAD_CODE
-- [ ] LOW_PROFILE
-- [ ] IMAGE_CHANGE_CODE
-- [ ] MAX_RESIZED_IMAGES
-- [ ] ALLOW_BLOATING
-- [ ] BACKBLAZE
-
-### Image hosting
-- [X] Resizing
-- [ ] Filters
-- [x] Gif to mp4 conversion
-- [x] Upload of images
-
-### Text file hosting
-- [x] Upload of text files
-- [x] Render template for text files
-- [x] Raw data view
-- [x] Downloadable
-
-### URL shortening
-- [ ] Upload of links to shorten
-
-### MP4 hosting
-- [x] Resizing
-- [x] Preview image generation
-- [x] Upload of videos
-- [x] Automatic conversion if not mobile friendly or wrong encoder used
-- [x] Render template for videos
-
-
----
-
-This is a [HASCHEK SOLUTIONS](https://haschek.solutions) project
-
-[![HS logo](https://pictshare.net/css/imgs/hs_logo.png)](https://haschek.solutions)
+Every other variable can be referenced against the [default PictShare configuration file](https://github.com/HaschekSolutions/pictshare/blob/master/inc/example.config.inc.php).
+- TITLE (string | Title of the page)
+- URL (string | URL that will be linked to new uploads)
+- PNG_COMPRESSION (int | 0-9 how much compression is used. note that this never affects quality. default: 6)
+- JPEG_COMPRESSION (int | 0-100 how high should the quality be? More is better. default: 90)
+- MASTER_DELETE_CODE (string | code if added to any url, will delete the image)
+- MASTER_DELETE_IP (string | ip which can delete any image)
+- ALLOW_BLOATING (true/false | can images be bloated to higher resolutions than the originals)
+- UPLOAD_CODE (string | code that has to be supplied to upload an image)
+- UPLOAD_FORM_LOCATION (string | absolute path where upload gui will be shown)
+- LOW_PROFILE (string | won't display error messages on failed uploads)
+- IMAGE_CHANGE_CODE (string | code if provided, needs to be added to image to apply filter/rotation/etc)
+- LOG_UPLOADER (true/false | log IPs of uploaders)
+- MAX_RESIZED_IMAGES (int | how many versions of a single image may exist? -1 for infinite)
+- SHOW_ERRORS (true/false | show upload/size/server errors?)
+- ALT_FOLDER (path to a folder where all hashes will be copied to and looked for offsite backup via nfs for example)

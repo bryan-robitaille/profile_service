@@ -45,7 +45,7 @@ async function publishMessageQueue(exchange, key, msgBody){
 function connectMessageQueuePublisher(){
   
     amqp.connect({
-      protocol:"amqps",
+      protocol:"amqp",
       hostname: config.rabbitMQ.host,
       port: 5671,
       username: config.rabbitMQ.user,

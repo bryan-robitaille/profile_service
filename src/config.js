@@ -64,7 +64,7 @@ const production = {
   size:300
 },
 rabbitMQ:{
-  host:"b-ae6dfc13-1270-4853-989b-be2f853ae2a6-1.mq.ca-central-1.amazonaws.com",
+  host:"quantum-mq.da-an.ca",
   user: mqUser,
   password: mqPass
 },

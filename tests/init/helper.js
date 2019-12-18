@@ -7,6 +7,7 @@ function setPrisma(context){
   context.prisma = new Prisma({
     typeDefs: "src/generated/prisma.graphql",
     endpoint: "http://localhost:4466/profile",
+    secret: process.env.PRISMA_SERVICE_SECRET,
     });
     return context;
 }
@@ -17,6 +18,7 @@ const getContext = async () => {
   ctx.prisma = await new Prisma({
     typeDefs: "src/generated/prisma.graphql",
     endpoint: "http://localhost:4466/profile",
+    secret: process.env.PRISMA_SERVICE_SECRET,
     });
   
   ctx.defaults = await getDefaults();

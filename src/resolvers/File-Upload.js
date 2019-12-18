@@ -4,6 +4,8 @@ const request = require("request");
 const sharp = require("sharp");
 const uploadDir = "./temp_convert";
 const config = require("../config");
+const dataURI = require('datauri').sync;
+
 
 const storeUpload = async ({ stream, filename }) => {
   const id = shortid.generate();
@@ -36,7 +38,7 @@ const convertPicture = async (originPath) => {
     .jpeg()
     .resize(config.image.size)
     .toFile(destinationPath)
-    .then(function(removeFile){
+    .then(function(){
       deletePictureFromTempFolder(originPath);
     })
     .then(function (err, info){
@@ -52,10 +54,13 @@ const convertPicture = async (originPath) => {
 const postImage = (path) => {
    return new Promise((resolve, reject) => {
     var filePath = String(path);
-    var req = request({
-      headers: {"Content-Type" : "image/jpeg"},
+    const base64encoded = dataURI(filePath);
+
+    request.post({
       url:     config.image.url,
-      method: "POST"
+      form: {
+        "base64": base64encoded
+      }
     }, function optionalCallback (err, httpResponse, body) {
       if (err) {
         reject();
@@ -65,8 +70,6 @@ const postImage = (path) => {
         resolve(url);
       }
     });
-    var form = req.form();
-    form.append("postimage", fs.createReadStream(filePath));
    });
 };
 

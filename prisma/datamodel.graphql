@@ -1,11 +1,11 @@
 type Profile {
-  gcID: ID! @unique
+  gcID: ID! @id
   name: String!
   email: String! @unique
   avatar: String
   mobilePhone: String
   officePhone: String
-  address: Address @relation(name:"Resident", onDelete: CASCADE)
+  address: Address @relation(name:"Resident", onDelete: CASCADE, link: INLINE)
   titleEn: String
   titleFr: String
   team: Team @relation(name:"TeamMembers")
@@ -16,8 +16,16 @@ type Profile {
   updatedApprovals: [Approval] @relation(name:"Updater")
 }
 
+type Avatar {
+  id: ID! @id
+  name: String!
+  url: String! @unique
+  deleteCode: String!
+  deleteUrl: String!
+}
+
 type Address {
-  id: ID! @unique
+  id: ID! @id
   streetAddress: String!
   city: String!
   province: String!
@@ -27,7 +35,7 @@ type Address {
 }
 
 type Team {
-  id: ID! @unique
+  id: ID! @id
   nameEn: String!
   nameFr: String!
   descriptionEn: String
@@ -37,12 +45,12 @@ type Team {
   organization: Organization! @relation(name:"Teams")
   owner: Profile @relation(name:"OwnerOfTeam")
   members: [Profile!]! @relation(name:"TeamMembers")
-  transferApproval: RequestedChange @relation(name:"TransferOwnershipTo")
+  transferApproval: RequestedChange @relation(name:"TransferOwnershipTo" link:INLINE)
   supervisorApproval: [RequestedChange] @relation(name:"SupervisoryApproval")
 }
 
 type Organization {
-  id: ID! @unique
+  id: ID! @id
   nameEn: String!
   nameFr: String!
   acronymEn: String!
@@ -51,10 +59,10 @@ type Organization {
 }
 
 type Approval {
-    id: ID! @unique
+    id: ID! @id
     gcIDApprover: Profile! @relation(name:"Approver")
     gcIDSubmitter: Profile! @relation(name:"Submitter")
-    requestedChange: RequestedChange! @relation(name: "RequestedChanges" onDelete: CASCADE)
+    requestedChange: RequestedChange! @relation(name: "RequestedChanges" onDelete: CASCADE link:INLINE)
     createdOn: String!
     createdBy: Profile! @relation(name:"Creator")
     updatedBy: Profile @relation(name:"Updater")
@@ -65,7 +73,7 @@ type Approval {
 }
 
 type RequestedChange {
-    id: ID! @unique
+    id: ID! @id
     approval: Approval! @relation(name:"RequestedChanges")
     name: String
     email: String

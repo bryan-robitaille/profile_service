@@ -42,11 +42,15 @@ temp_convert
 # docker volume for image server upload storage
 image-server/uploads
 
+# Image server base code
+image-server
+
 # jest test results
 jest_*/
 
 # data volume for docker db volume
 postgres/
-
-# generated files
-src/generated
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

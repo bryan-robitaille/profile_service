@@ -56,7 +56,7 @@ const production = {
  },
  prisma: {
   host: prismaHost + "/" + appName + "/prod",
-  debug: true
+  debug: false
 },
  image:{
   url:"http://avatar-quantum.ca-central-1.elasticbeanstalk.com/api/base64.php",

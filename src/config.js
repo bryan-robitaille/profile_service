@@ -76,7 +76,7 @@ client:{
   secret:clientSecret
 },
 elastic:{
-  host:"http://localhost:9200"
+  host:"https://vpc-quantum-es-knxrxnyxaxbcjuvd76h5u34354.ca-central-1.es.amazonaws.com"
 }
 };
 

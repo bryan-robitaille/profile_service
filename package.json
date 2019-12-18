@@ -15,8 +15,8 @@
     "prisma-admin-dev": "env-cmd -e development yarn prisma token",
     "eslint": "eslint src/",
     "test": "PRISMA_API_ENDPOINT=localhost yarn prisma deploy && NODE_ENV=development jest --runInBand --coverage",
-    "seed-dev": "NODE_ENV=developement node scripts profile_seeder.js",
-    "seed-prod": "NODE_ENV=production node scripts profile_seeder.js"
+    "seed-dev": "NODE_ENV=development node ./scripts/profile_seeder.js",
+    "seed-prod": "NODE_ENV=production node ./scripts/profile_seeder.js"
   },
   "jest": {
     "verbose": false,

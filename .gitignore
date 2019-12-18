@@ -50,3 +50,7 @@ jest_*/
 
 # data volume for docker db volume
 postgres/
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
